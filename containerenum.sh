@@ -103,6 +103,7 @@ capsetInh=$(grep CapInh /proc/$$/status |awk '{ print $2 }')
 if [ "0000003fffffffff" == ${capsetEff} ]; then
 	echo -e "[*] All Linux Capabilities available\n\tHere we go..."
 else
+	echo "[*] Capabilities: "
 	grep Cap /proc/$$/status
 fi
 
