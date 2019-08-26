@@ -87,7 +87,7 @@ fi
 first=$(cat /proc/$$/gid_map | awk '{ print $1 }')
 second=$(cat /proc/$$/gid_map | awk '{ print $2 }')
 if [ $first == $second ]; then
-	echo "[*] Within Host UID Namespace!"
+	echo "[*] Within Host GID Namespace!"
 fi
 
 # TODO: Make checks accurate 
