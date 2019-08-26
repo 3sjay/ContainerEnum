@@ -48,7 +48,7 @@ fi
 if [ $(grep overlay /proc/$$/mountstats | wc -l) -gt 0 ]; then
 	if [ $(grep docker /proc/$$/mountstats | wc -l) -eq 0 ]; then
 		echo "[*] overlay in /proc/<pid>/mounstats but not docker"
-		echo "		if docker would be in there we would be on the host"
+		echo "    if docker would be in there we would be on the host"
 	fi
 fi
 
