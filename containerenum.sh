@@ -4,7 +4,6 @@ echo "[*] Checking dmesg for container info"
 dmesg 2>/dev/null | grep "docker\|lxc"
 
 echo
-echo
 
 if [ -x /.dockerenv ]; then
 	echo "[*] /.dockerenv found"
@@ -12,25 +11,25 @@ fi
 
 ntimes=$(grep docker /proc/$$/cgroup | wc -l)
 if [ $ntimes -gt 0 ]; then
-	echo "[*] Found occurence of docker in /proc/<pid>/cgroup/ " $ntimes " times"
+	echo "[*] Found occurence of docker in /proc/<pid>/cgroup " $ntimes " times"
 fi
 
 
 ntimes=$(grep kube /proc/$$/cgroup | wc -l)
 if [ $ntimes -gt 0 ]; then
-	echo "[*] Found occurence of kube in /proc/<pid>/cgroup/\nHello Cluster :)" $ntimes " times"
+	echo -e "[*] Found occurence of kube in /proc/<pid>/cgroup\nHello Cluster :)" $ntimes " times"
 fi
 
 
 ntimes=$(grep docker /proc/$$/cpuset | wc -l)
 if [ $ntimes -gt 0 ]; then
-	echo "[*] Found occurence of docker in /proc/<pid>/cpuset/ " $ntimes " times"
+	echo "[*] Found occurence of docker in /proc/<pid>/cpuset " $ntimes " times"
 fi
 
 
 ntimes=$(grep kube /proc/$$/cpuset | wc -l)
 if [ $ntimes -gt 0 ]; then
-	echo "[*] Found occurence of kube in /proc/<pid>/cpuset/\nHello Cluster :) " $ntimes " times"
+	echo -e "[*] Found occurence of kube in /proc/<pid>/cpuset\nHello Cluster :) " $ntimes " times"
 fi
 
 
@@ -48,7 +47,7 @@ fi
 
 if [ $(grep overlay /proc/$$/mountstats | wc -l) -gt 0 ]; then
 	if [ $(grep docker /proc/$$/mountstats | wc -l) -eq 0 ]; then
-		echo -ne "[*] overlay in /proc/<pid>/mounstats but not docker"
+		echo "[*] overlay in /proc/<pid>/mounstats but not docker"
 		echo "		if docker would be in there we would be on the host"
 	fi
 fi
@@ -84,6 +83,12 @@ if [ $first == $second ]; then
 	echo "[*] Within Host UID Namespace!"
 fi
 
+# Check for GID remapping
+first=$(cat /proc/$$/gid_map | awk '{ print $1 }')
+second=$(cat /proc/$$/gid_map | awk '{ print $2 }')
+if [ $first == $second ]; then
+	echo "[*] Within Host UID Namespace!"
+fi
 
 # TODO: Make checks accurate 
 if [ $(ip a 2>/dev/null | grep docker | wc -l ) -gt 0 ] || [ $(ifconfig 2>/dev/null | grep docker | wc -l ) -gt 0 ]; then
@@ -95,14 +100,10 @@ fi
 capsetEff=$(grep CapEff /proc/$$/status |awk '{ print $2 }')
 capsetInh=$(grep CapInh /proc/$$/status |awk '{ print $2 }')
 
-if [ "0000003fffffffff" == ${capsetEff} ] && [ "0000003fffffffff" == ${capsetInh} ]; then
-	echo "[*] All Linux Capabilities available\n\tHere we go..."
+if [ "0000003fffffffff" == ${capsetEff} ]; then
+	echo -e "[*] All Linux Capabilities available\n\tHere we go..."
+else
+	grep Cap /proc/$$/status
 fi
 
 
-
-
-## To Check:
-# What is this file meant to do:
-#root@88bdee8239e5:/proc/1# cat projid_map
-#         0          0 4294967295
